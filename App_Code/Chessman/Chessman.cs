@@ -6,7 +6,7 @@ using System.Web;
 /// <summary>
 /// Summary description for Base
 /// </summary>
-public class Chessman
+public abstract class Chessman
 {
     int playerColor;
 	public Chessman()
@@ -16,12 +16,8 @@ public class Chessman
 		//
 	}
 
-    protected abstract void canMoveTo(int x, int y)
-    {
-    }
+    protected abstract void canMoveTo();
 
-    protected abstract void moveTo(int x, int y)
-    {
-    }
+    protected abstract void moveTo();
 
 }

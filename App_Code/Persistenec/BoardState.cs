@@ -11,7 +11,7 @@ public class BoardState
 	const int TURN_WHITE = 0x0;
 	const int TURN_BLACK = 0x1;
 
-    int[,] board;
+    Chessman[,] board;
     Guid boardId;
     Guid playerWhiteId;
     Guid playerBlackId;
