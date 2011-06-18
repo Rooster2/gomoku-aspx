@@ -22,6 +22,7 @@ public partial class login : System.Web.UI.Page
             return;
         }
         Session["username"] = textboxUsername.Text;
+        Session["userid"] = Guid.NewGuid().ToString();
         Response.Redirect("~/boardlist.aspx");
     }
 }

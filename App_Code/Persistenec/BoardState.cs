@@ -12,10 +12,10 @@ public class BoardState
 	const int TURN_BLACK = 0x1;
 
     Chessman[,] board;
-    Guid boardId;
-    Guid playerWhiteId;
-    Guid playerBlackId;
-    int Turn;
+    String boardId;
+    String playerWhiteId;
+    String playerBlackId;
+    int CurrTurn;
 
     public BoardState()
 	{
@@ -23,13 +23,13 @@ public class BoardState
 
 	public void ToggleTurn()
 	{
-		if (Turn == TURN_BLACK)
+		if (CurrTurn == TURN_BLACK)
 		{
-			Turn = TURN_WHITE;
+			CurrTurn = TURN_WHITE;
 		}
 		else // so: turn == TURN_WHITE
 		{
-			Turn = TURN_BLACK;
+			CurrTurn = TURN_BLACK;
 		}
 	}
 }

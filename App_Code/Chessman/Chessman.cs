@@ -6,18 +6,16 @@ using System.Web;
 /// <summary>
 /// Summary description for Base
 /// </summary>
-public abstract class Chessman
+public class Chessman
 {
-    int playerColor;
+    public const string GRID_NORMAL = "~/images/aGrid2.png";
+    public const string GRID_BLACK = "~/images/aBlackGrid2.png";
+    public const string GRID_WHITE = "~/images/aWhiteGrid2.png";
+
+    public string GridType { get; set; }
 	public Chessman()
 	{
-		//
-		// TODO: Add constructor logic here
-		//
+        GridType = GRID_NORMAL;
 	}
-
-    protected abstract void canMoveTo();
-
-    protected abstract void moveTo();
 
 }

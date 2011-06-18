@@ -7,22 +7,6 @@ using System.Web.UI.WebControls;
 
 public partial class entrance : System.Web.UI.Page
 {
-    private Dictionary<string, Room> Rooms
-    {
-        get
-        {
-            Dictionary<string, Room> rms = (Dictionary<string, Room>)Application["rooms"];
-            if (rms == null)
-            {
-                rms = new Dictionary<string, Room>();
-            }
-            return rms;
-        }
-        set
-        {
-            Application["rooms"] = value;
-        }
-    }
     protected void Page_Load(object sender, EventArgs e)
     {
         if (Session["username"] != null)
@@ -35,59 +19,52 @@ public partial class entrance : System.Web.UI.Page
             return;
         }
 
-        Dictionary<string, Room> rooms = Rooms;
-        ////Dictionary<string, string> roomToId = new Dictionary<string,string>();
-        ////int index = 0;
-        foreach (KeyValuePair<String, Room> r in rooms)
+        Dictionary<string, Board> boardList = CommonState.Boards;
+        foreach (KeyValuePair<String, Board> b in boardList)
 	    {
-            ////index++;
             LinkButton link = new LinkButton();
-            ////link.ID = "room" + index.ToString();
-            link.ID = r.Value.Id;
-            link.Text = r.Value.Persons + " Persons in room: " + r.Value.Name + " (" + r.Value.Id + ")";
-            link.Click += new EventHandler(room_Click);
+            link.ID = b.Value.Id;
+            link.Text = b.Value.Players.ToString() + " Players and " + 
+                b.Value.Viewers.ToString() + " Viewers joined board: " + 
+                b.Value.Nickname + " (" + b.Value.Id + ")";
+            link.Click += new EventHandler(Board_Click);
             UpdatePanel1.ContentTemplateContainer.Controls.Add(link);
             Label newLine = new Label();
             newLine.Text = "<br />";
             UpdatePanel1.ContentTemplateContainer.Controls.Add(newLine);
-
-            ////roomToId.Add(link.ID, r.Value.Id);
 	    }
-        ////ViewState["roomToId"] = roomToId;
     }
 
-    void room_Click(object sender, EventArgs e)
+    void Board_Click(object sender, EventArgs e)
     {
-        ////if (ViewState["roomToId"] == null)
-        ////{
-        ////    // TODO
-        ////    return;
-        ////}
-        ////string roomNo = ((Control)sender).ID;
-        ////Dictionary<string, string> roomToId = (Dictionary<string, string>)ViewState["roomToId"];
-        ////if (!roomToId.ContainsKey(roomNo) {
-        ////    // TODO
-        ////    return;
-        ////}
-        ////string roomId = roomToId[roomNo];
-        string roomId = ((Control)sender).ID;
-        System.Diagnostics.Debug.WriteLine("room id is: " + roomId);
+        string boardId = ((Control)sender).ID;
+        System.Diagnostics.Debug.WriteLine("board id is: " + boardId);
         //Response.Redirect(Request.Url.AbsolutePath.ToString() + "test");
-        Response.Redirect("~/board.aspx?id=" + roomId);
+        Response.Redirect("~/board.aspx?id=" + boardId);
     }
 
-    protected void buttonBuildNewRoom_Click(object sender, EventArgs e)
+    protected void buttonStartANewBoard_Click(object sender, EventArgs e)
     {
-        Room r = new Room();
-        r.Name = textboxRoomName.Text;
-        Dictionary<string, Room> rooms = Rooms;
+        Board board = new Board();
+        board.Nickname = textboxRoomName.Text;
+        // debug only:
+        if (CommonState.UserId != null)
+        {
+            board.PlayerWhiteId = CommonState.UserId;
+            board.CurrTurn = board.PlayerWhiteId;
+        }
+        else
+        {
+            Response.Redirect("~/login.aspx");
+            return;
+        }
+        // debug end
 
-        //if (rooms.ContainsKey(r.Id))
-        //{
-        //    // TODO: tell user that this room already exists
-        //    return;
-        //}
-        rooms.Add(r.Id, r);
-        Rooms = rooms;
+        // EPIC, because i new a new one at last in construct
+        //Debug.WriteLine("Now board is null? " + board.chessboard[0, 0].GridType);
+        Dictionary<string, Board> boardList = CommonState.Boards;
+        boardList.Add(board.Id, board);
+        CommonState.Boards = boardList;
+        Response.Redirect("~/board.aspx?id=" + board.Id);
     }
 }

@@ -16,7 +16,7 @@
             <br />
             <asp:Label ID="Label1" runat="server">New Room:</asp:Label>
             <asp:TextBox ID="textboxRoomName" runat="server"></asp:TextBox>
-            <asp:Button ID="buttonBuildNewRoom" Text="Create new room" runat="server" onclick="buttonBuildNewRoom_Click" />
+            <asp:Button ID="buttonStartANewBoard" Text="Create new room" runat="server" onclick="buttonStartANewBoard_Click" />
         </div>
         <br />
         <br />

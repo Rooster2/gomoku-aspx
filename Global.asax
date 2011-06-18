@@ -9,13 +9,16 @@
     {
         // Code that runs on application startup
 		//Application.Add("users", users);
+        Application.RemoveAll();
+        Application.Clear();
     }
     
     void Application_End(object sender, EventArgs e) 
     {
         //  Code that runs on application shutdown
 
-		Session.RemoveAll();
+        Application.RemoveAll();
+        Application.Clear();
     }
         
     void Application_Error(object sender, EventArgs e) 
