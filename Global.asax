@@ -3,8 +3,6 @@
 
 <script runat="server">
 
-	List<String> users = new List<String>();
-    int[,] board = new int[3, 3];
     void Application_Start(object sender, EventArgs e) 
     {
         // Code that runs on application startup
@@ -29,10 +27,6 @@
 
     void Session_Start(object sender, EventArgs e) 
     {
-        board = new int[3, 3];
-        // Code that runs when a new session is started
-		Session.Add("users", users);
-        Session.Add("board", board);
     }
 
     void Session_End(object sender, EventArgs e) 

@@ -9,20 +9,20 @@ public partial class login : System.Web.UI.Page
 {
     protected void Page_Load(object sender, EventArgs e)
     {
-        if (Session["username"] != null)
+        if (CommonState.UserNick != null)
         {
-            textboxUsername.Text = (string)Session["username"];
+            textboxUsername.Text = CommonState.UserNick;
         }
     }
     protected void buttonLogin_Click(object sender, EventArgs e)
     {
-        if (textboxUsername.Text == String.Empty)
+        if (String.Empty.Equals(textboxUsername.Text))
         {
             // TODO
             return;
         }
-        Session["username"] = textboxUsername.Text;
-        Session["userid"] = Guid.NewGuid().ToString();
+        CommonState.UserNick = textboxUsername.Text;
+        CommonState.UserGuid = Guid.NewGuid().ToString();
         Response.Redirect("~/boardlist.aspx");
     }
 }

@@ -12,19 +12,6 @@ using System.Drawing;
 
 public partial class board : System.Web.UI.Page
 {
-    string BoardId
-    {
-        get
-        {
-            string id = Request.Params["id"];
-            if (String.IsNullOrEmpty(id))
-            {
-                return null;
-            }
-            return id;
-        }
-    }
-
     protected void Page_Load(object sender, EventArgs e)
     {
         if (IsPostBack)
@@ -37,18 +24,18 @@ public partial class board : System.Web.UI.Page
         }
 
         // get board id or redirect
-        if (BoardId == null)
+        if (CommonState.CurrBoardId == null)
         {
             Response.Redirect("~/boardlist.aspx");
             return;
         }
         else
         {
-            labelDebugBoardId.Text = "board id: " + BoardId;
+            labelDebugBoardId.Text = "board id: " + CommonState.CurrBoardId;
         }
 
         // get Board object
-        Board board = CommonState.GetBoardById(BoardId);
+        Board board = CommonState.GetBoardById(CommonState.CurrBoardId);
         if (board == null)
         {
             // TODO
@@ -73,25 +60,29 @@ public partial class board : System.Web.UI.Page
     
     protected void Grid_Click(object sender, ImageClickEventArgs e)
     {
+        // locate the position of clilcked grid
         ImageButton grid = ((ImageButton)sender);
         int i = Int32.Parse(grid.ID.Substring(3, 1)) - 1;
         int j = Int32.Parse(grid.ID.Substring(4, 1)) - 1;
         Debug.WriteLine("Clicked grid: " + i.ToString() + " " + j.ToString());
 
-        Board board = CommonState.GetBoardById(BoardId);
+        // get the current Board
+        Board board = CommonState.GetBoardById(CommonState.CurrBoardId);
         if (board == null)
         {
             Response.Redirect("~/boardlist.aspx");
             return;
         }
 
-        if (CommonState.UserId == null)
+        // is user logged in?
+        if (CommonState.UserGuid == null)
         {
             Response.Redirect("~/login.aspx");
             return;
         }
 
-        if (board.IsTurnOf(CommonState.UserId))
+        // check if the user can move
+        if (board.IsTurnOf(CommonState.UserGuid))
         {
             // make move
             Debug.WriteLine("making move");

@@ -9,9 +9,9 @@ public partial class entrance : System.Web.UI.Page
 {
     protected void Page_Load(object sender, EventArgs e)
     {
-        if (Session["username"] != null)
+        if (CommonState.UserNick != null)
         {
-            labelWelcome.Text = "Welcome: " + (string)Session["username"];
+            labelWelcome.Text = "Welcome: " + CommonState.UserNick;
         }
         else
         {
@@ -48,9 +48,9 @@ public partial class entrance : System.Web.UI.Page
         Board board = new Board();
         board.Nickname = textboxRoomName.Text;
         // debug only:
-        if (CommonState.UserId != null)
+        if (CommonState.UserGuid != null)
         {
-            board.PlayerWhiteId = CommonState.UserId;
+            board.PlayerWhiteId = CommonState.UserGuid;
             board.CurrTurn = board.PlayerWhiteId;
         }
         else

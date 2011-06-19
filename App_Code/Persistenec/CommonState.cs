@@ -26,11 +26,45 @@ public class CommonState
         }
     }
 
-    public static string UserId
+    public static string UserGuid
     {
         get
         {
-            string id = (string)HttpContext.Current.Session["userid"];
+            string id = (string)HttpContext.Current.Session["userguid"];
+            if (String.IsNullOrEmpty(id))
+            {
+                return null;
+            }
+            return id;
+        }
+        set
+        {
+            HttpContext.Current.Session["userguid"] = value;
+        }
+    }
+
+    public static string UserNick
+    {
+        get
+        {
+            string id = (string)HttpContext.Current.Session["usernick"];
+            if (String.IsNullOrEmpty(id))
+            {
+                return null;
+            }
+            return id;
+        }
+        set
+        {
+            HttpContext.Current.Session["usernick"] = value;
+        }
+    }
+
+    public static string CurrBoardId
+    {
+        get
+        {
+            string id = HttpContext.Current.Request.Params["id"];
             if (String.IsNullOrEmpty(id))
             {
                 return null;
@@ -38,29 +72,6 @@ public class CommonState
             return id;
         }
     }
-
-    //private static Dictionary<string, BoardState> Boards
-    //{
-    //    get
-    //    {
-    //        string boardId = HttpContext.Current.Request.Params["id"];
-    //        Dictionary<string, BoardState> brds =
-    //            (Dictionary<string, BoardState>)HttpContext.Current.Application["boards"];
-    //        if (boardId == null)
-    //        {
-    //            return null;
-    //        }
-    //        if (brds == null)
-    //        {
-    //            brds = (Dictionary<string, BoardState>)HttpContext.Current.Application["boards"];
-    //        }
-    //        return brds;
-    //    }
-    //    set
-    //    {
-    //        HttpContext.Current.Application["boards"] = value;
-    //    }
-    //}
 
     public static Board GetBoardById(string id)
     {

@@ -9,16 +9,16 @@ using System.Web.UI.WebControls.WebParts;
 using System.Web.UI.HtmlControls;
 
 /// <summary>
-/// Debug 的摘要说明
+/// Debug Methods
 /// </summary>
 public class Debug
 {
-	public Debug()
-	{
-	}
-
+    private static bool Debug = true;
     public static void WriteLine(String s)
     {
-        System.Diagnostics.Debug.WriteLine("DEBUG: " + s);
+        if (Debug)
+        {
+            System.Diagnostics.Debug.WriteLine("DEBUG: " + s);
+        }
     }
 }
