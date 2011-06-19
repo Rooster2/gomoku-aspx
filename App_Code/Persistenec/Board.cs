@@ -24,7 +24,6 @@ public class Board
         PlayerWhiteId = String.Empty;
         PlayerBlackId = String.Empty;
         chessboard = new Chessman[Configure.ROWS, Configure.COLS];
-        chessboard[0, 0] = new Chessman();
         for (int i = 0; i < Configure.ROWS; i++)
         {
             for (int j = 0; j < Configure.COLS; j++)

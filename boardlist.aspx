@@ -4,6 +4,7 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head runat="server">
+    <link href="style.css" rel="stylesheet" type="text/css" />
     <title></title>
 </head>
 <body>
@@ -14,11 +15,10 @@
             <asp:Label ID="labelWelcome" runat="server" Text="[labelWelcome]"></asp:Label>
             <br />
             <br />
-            <asp:Label ID="Label1" runat="server">New Room:</asp:Label>
-            <asp:TextBox ID="textboxRoomName" runat="server"></asp:TextBox>
+            <asp:Label ID="labelNewBoard" runat="server">New room:</asp:Label>
+            <asp:TextBox ID="textboxBoardNick" runat="server" Width="257px"></asp:TextBox>
             <asp:Button ID="buttonStartANewBoard" Text="Create new room" runat="server" onclick="buttonStartANewBoard_Click" />
         </div>
-        <br />
         <br />
         <asp:UpdatePanel ID="UpdatePanel1" runat="server">
             <Triggers>

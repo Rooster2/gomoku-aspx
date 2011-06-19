@@ -1,25 +1,26 @@
 ﻿<%@ Page Language="C#" AutoEventWireup="true" CodeFile="board.aspx.cs" Inherits="board" %>
 
-<%@ Register src="chessboard.ascx" tagname="chessboard" tagprefix="uc1" %>
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
 <html xmlns="http://www.w3.org/1999/xhtml" >
 <head runat="server">
-    <link href="StyleSheet.css" rel="stylesheet" type="text/css" />
+    <link href="style.css" rel="stylesheet" type="text/css" />
     <title>Chessboard</title>
 </head>
 <body>
     <form id="form1" runat="server">
         <asp:ScriptManager ID="ScriptManager1" EnablePartialRendering="true" runat="server" />
-		<asp:Timer ID="Timer1" runat="server" Interval="1000"></asp:Timer>
+		<asp:Timer ID="Timer1" runat="server" Interval="1500"></asp:Timer>
 
-        <asp:Label ID="labelDebugBoardId" runat="server" Text="[boardId]"></asp:Label>
-		<br />
+        <asp:LinkButton ID="linkBackToBoardList" Text="<< back" runat="server" 
+            onclick="linkBackToBoardList_Click" />
+        &nbsp;|
 		<asp:Button ID="buttonRestart" runat="server" Text="Restart" />
+        <br />
+        <br />
 		<asp:UpdatePanel ID="UpdatePanel1" UpdateMode="Always" runat="server">
 			<ContentTemplate>
-                <uc1:chessboard ID="chessboard1" runat="server" />
+                <asp:PlaceHolder ID="ChessboardHolder" runat="server" />
             </ContentTemplate>
 			<Triggers>
 				<asp:AsyncPostBackTrigger ControlID="Timer1" EventName="Tick" />

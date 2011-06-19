@@ -81,4 +81,10 @@ public class CommonState
         }
         return null;
     }
+
+    public static void SaveBoard(Board board)
+    {
+        Dictionary<string, Board> boardlist = Boards;
+        boardlist[board.Id] = board;
+    }
 }

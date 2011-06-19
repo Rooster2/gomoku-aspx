@@ -9,11 +9,27 @@ public partial class chessboard : System.Web.UI.UserControl
 {
     protected void Page_Load(object sender, EventArgs e)
     {
-        GenerateChessboard();
-        RestoreChessboard();
+        // get board id or redirect
+        if (CommonState.CurrBoardId == null)
+        {
+            // TODO
+            Response.Redirect("~/boardlist.aspx");
+            return;
+        }
+
+        // get Board object
+        Board board = CommonState.GetBoardById(CommonState.CurrBoardId);
+        if (board == null)
+        {
+            // TODO
+            Response.Redirect("~/boardlist.aspx");
+            return;
+        }
+
+        GenerateAndRestoreChessboard(board);
     }
 
-    void GenerateChessboard()
+    void GenerateAndRestoreChessboard(Board board)
     {
         const int SIZE = 32;
         Table chessboard = new Table();
@@ -35,8 +51,10 @@ public partial class chessboard : System.Web.UI.UserControl
                 ImageButton grid = new ImageButton();
                 grid.ID = String.Format("grid{0:X}{1:X}", i, j);
                 //grid.ImageUrl = "~/aNopeGrid2.png";
-                grid.CssClass = Chessman.GRID_NOPE;
+                grid.CssClass = board.chessboard[i, j].GridType;
+                //grid.CssClass = Chessman.GRID_NOPE;
                 grid.Click += new ImageClickEventHandler(Grid_Click);
+
                 //grid.AlternateText = "+";
                 //grid.Height = SIZE;
                 //grid.Width = SIZE;
@@ -49,46 +67,12 @@ public partial class chessboard : System.Web.UI.UserControl
         ChessboardHolder.Controls.Add(chessboard);
     }
 
-    void RestoreChessboard()
-    {
-        // get board id or redirect
-        if (CommonState.CurrBoardId == null)
-        {
-            // TODO
-            Response.Redirect("~/boardlist.aspx");
-            return;
-        }
-
-        // get Board object
-        Board board = CommonState.GetBoardById(CommonState.CurrBoardId);
-        if (board == null)
-        {
-            // TODO
-            Response.Redirect("~/boardlist.aspx");
-            return;
-        }
-
-        // restoring grid images
-        for (int i = 0; i < Configure.ROWS; i++)
-        {
-            for (int j = 0; j < Configure.COLS; j++)
-            {
-                string controlId = String.Format("grid{0:X}{1:X}", i, j);
-                Debug.WriteLine("restoring control: " + controlId);
-                ImageButton grid = (ImageButton)FindControl(controlId);
-                grid.CssClass = board.chessboard[i, j].GridType;
-            }
-        }
-
-        // we are done
-    }
-
     void Grid_Click(object sender, ImageClickEventArgs e)
     {
         // locate the position of clilcked grid
         ImageButton grid = ((ImageButton)sender);
-        int i = Int32.Parse(grid.ID.Substring(3, 1)) - 1;
-        int j = Int32.Parse(grid.ID.Substring(4, 1)) - 1;
+        int i = Int32.Parse(grid.ID.Substring(4, 1)) - 1;
+        int j = Int32.Parse(grid.ID.Substring(5, 1)) - 1;
         Debug.WriteLine("Clicked grid: " + i.ToString() + " " + j.ToString());
 
         // get the current Board

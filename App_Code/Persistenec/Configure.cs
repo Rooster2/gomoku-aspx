@@ -8,6 +8,7 @@ using System.Web;
 /// </summary>
 public class Configure
 {
+    // cannot bigger than 15 because we use HEX
     public const int ROWS = 15;
     public const int COLS = 15;
 }

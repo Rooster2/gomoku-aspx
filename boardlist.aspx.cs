@@ -24,13 +24,18 @@ public partial class entrance : System.Web.UI.Page
 	    {
             LinkButton link = new LinkButton();
             link.ID = b.Value.Id;
-            link.Text = b.Value.Players.ToString() + " Players and " + 
-                b.Value.Viewers.ToString() + " Viewers joined board: " + 
-                b.Value.Nickname + " (" + b.Value.Id + ")";
             link.Click += new EventHandler(Board_Click);
-            UpdatePanel1.ContentTemplateContainer.Controls.Add(link);
-            Label newLine = new Label();
+            link.Text = "· " + b.Value.Nickname +
+                " (" + b.Value.Players.ToString() + " Players, " +
+                b.Value.Viewers.ToString() + " Viewers)";
+            if (Debug.IsDebug)
+            {
+                link.Text += " (" + b.Value.Id + ")";
+            }
+            Literal newLine = new Literal();
             newLine.Text = "<br />";
+
+            UpdatePanel1.ContentTemplateContainer.Controls.Add(link);
             UpdatePanel1.ContentTemplateContainer.Controls.Add(newLine);
 	    }
     }
@@ -46,7 +51,7 @@ public partial class entrance : System.Web.UI.Page
     protected void buttonStartANewBoard_Click(object sender, EventArgs e)
     {
         Board board = new Board();
-        board.Nickname = textboxRoomName.Text;
+        board.Nickname = textboxBoardNick.Text;
         // debug only:
         if (CommonState.UserGuid != null)
         {
