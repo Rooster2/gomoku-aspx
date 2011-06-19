@@ -23,11 +23,11 @@ public class Board
         CurrTurn = String.Empty;
         PlayerWhiteId = String.Empty;
         PlayerBlackId = String.Empty;
-        chessboard = new Chessman[3, 3];
+        chessboard = new Chessman[Configure.ROWS, Configure.COLS];
         chessboard[0, 0] = new Chessman();
-        for (int i = 0; i < 3; i++)
+        for (int i = 0; i < Configure.ROWS; i++)
         {
-            for (int j = 0; j < 3; j++)
+            for (int j = 0; j < Configure.COLS; j++)
             {
                 chessboard[i, j] = new Chessman();
             }

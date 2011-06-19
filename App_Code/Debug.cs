@@ -13,10 +13,10 @@ using System.Web.UI.HtmlControls;
 /// </summary>
 public class Debug
 {
-    private static bool Debug = true;
+    private static bool _debug = true;
     public static void WriteLine(String s)
     {
-        if (Debug)
+        if (_debug)
         {
             System.Diagnostics.Debug.WriteLine("DEBUG: " + s);
         }

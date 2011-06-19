@@ -1,10 +1,13 @@
 ﻿<%@ Page Language="C#" AutoEventWireup="true" CodeFile="board.aspx.cs" Inherits="board" %>
 
+<%@ Register src="chessboard.ascx" tagname="chessboard" tagprefix="uc1" %>
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
 <html xmlns="http://www.w3.org/1999/xhtml" >
 <head runat="server">
-    <title>a demo</title>
+    <link href="StyleSheet.css" rel="stylesheet" type="text/css" />
+    <title>Chessboard</title>
 </head>
 <body>
     <form id="form1" runat="server">
@@ -16,18 +19,8 @@
 		<asp:Button ID="buttonRestart" runat="server" Text="Restart" />
 		<asp:UpdatePanel ID="UpdatePanel1" UpdateMode="Always" runat="server">
 			<ContentTemplate>
-			    <div>
-		            <asp:ImageButton ID="img11" runat="server" Height="128px" Width="128px" OnClick="Grid_Click" />
-                    <asp:ImageButton ID="img12" runat="server" Height="128px" Width="128px" OnClick="Grid_Click" />
-                    <asp:ImageButton ID="img13" runat="server" Height="128px" Width="128px" OnClick="Grid_Click" /><br />
-                    <asp:ImageButton ID="img21" runat="server" Height="128px" Width="128px" OnClick="Grid_Click" />
-                    <asp:ImageButton ID="img22" runat="server" Height="128px" Width="128px" OnClick="Grid_Click" />
-                    <asp:ImageButton ID="img23" runat="server" Height="128px" Width="128px" OnClick="Grid_Click" /><br />
-                    <asp:ImageButton ID="img31" runat="server" Height="128px" Width="128px" OnClick="Grid_Click" />
-                    <asp:ImageButton ID="img32" runat="server" Height="128px" Width="128px" OnClick="Grid_Click" />
-                    <asp:ImageButton ID="img33" runat="server" Height="128px" Width="128px" OnClick="Grid_Click" /><br />
-                </div>
-			</ContentTemplate>
+                <uc1:chessboard ID="chessboard1" runat="server" />
+            </ContentTemplate>
 			<Triggers>
 				<asp:AsyncPostBackTrigger ControlID="Timer1" EventName="Tick" />
 			</Triggers>
