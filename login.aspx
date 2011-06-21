@@ -10,12 +10,15 @@
 <body>
     <form id="form1" runat="server">
     <div>
-        <asp:Label ID="labelUsername" runat="server">Username:</asp:Label>
-        <asp:TextBox ID="textboxUsername" runat="server"></asp:TextBox>
+        <asp:Label ID="labelErrorMsg" runat="server" />
         <br />
+        <asp:Label ID="labelName" runat="server">Your name:</asp:Label>
+        <asp:TextBox ID="textboxName" runat="server"></asp:TextBox>
+        <br />
+        <!--
         <asp:Label ID="labelPassword" runat="server">Password:</asp:Label>
         <asp:TextBox ID="textboxPassword" TextMode="Password" runat="server"></asp:TextBox>
-        <br />
+        <br />-->
         <asp:Button ID="buttonLogin" Text="OK" runat="server" 
             onclick="buttonLogin_Click" />
     </div>

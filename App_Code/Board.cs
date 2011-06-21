@@ -59,6 +59,15 @@ public class Board
 
     public void MakeMove(int i, int j)
     {
+        if (Chessman.GRID_NOPE.Equals(chessboard[i, j].GridType))
+        {
+            ;
+        }
+        else
+        {
+            Debug.WriteLine("Chessman existed at this position");
+            return;
+        }
         if (CurrTurn.Equals(PlayerBlackId))
         {
             chessboard[i, j].GridType = Chessman.GRID_BLACK;

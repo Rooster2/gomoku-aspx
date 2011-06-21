@@ -5,6 +5,7 @@
 
     void Application_Start(object sender, EventArgs e) 
     {
+        AppDomain.CurrentDomain.SetData("SQLServerCompactEditionUnderWebHosting", true);
         // Code that runs on application startup
 		//Application.Add("users", users);
         Application.RemoveAll();

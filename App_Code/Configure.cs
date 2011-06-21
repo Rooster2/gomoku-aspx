@@ -11,4 +11,6 @@ public class Configure
     // cannot bigger than 15 because we use HEX
     public const int ROWS = 15;
     public const int COLS = 15;
+    public const long CONNECTOIN_TIMEOUT = 20;
+    public const long SESSION_TIMEOUT = 20 * 60;
 }

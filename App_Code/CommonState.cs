@@ -8,6 +8,23 @@ using System.Web;
 /// </summary>
 public class CommonState
 {
+    public static string ConnectionString
+    {
+        get
+        {
+            return System.Configuration.ConfigurationManager.
+                ConnectionStrings["persons"].ConnectionString;
+        }
+    }
+
+    public static int EpochTime
+    {
+        get
+        {
+            return (int)(DateTime.UtcNow - new DateTime(1970, 1, 1)).TotalSeconds;
+        }
+    }
+
     public static Dictionary<string, Board> Boards
     {
         get
@@ -26,11 +43,11 @@ public class CommonState
         }
     }
 
-    public static string UserGuid
+    public static string PersonId
     {
         get
         {
-            string id = (string)HttpContext.Current.Session["userguid"];
+            string id = (string)HttpContext.Current.Session["id"];
             if (String.IsNullOrEmpty(id))
             {
                 return null;
@@ -39,15 +56,15 @@ public class CommonState
         }
         set
         {
-            HttpContext.Current.Session["userguid"] = value;
+            HttpContext.Current.Session["id"] = value;
         }
     }
 
-    public static string UserNick
+    public static string PersonName
     {
         get
         {
-            string id = (string)HttpContext.Current.Session["usernick"];
+            string id = (string)HttpContext.Current.Session["name"];
             if (String.IsNullOrEmpty(id))
             {
                 return null;
@@ -56,7 +73,7 @@ public class CommonState
         }
         set
         {
-            HttpContext.Current.Session["usernick"] = value;
+            HttpContext.Current.Session["name"] = value;
         }
     }
 

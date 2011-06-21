@@ -13,6 +13,9 @@
         <asp:Timer ID="Timer1" Interval="1000" runat="server"></asp:Timer>
         <div>
             <asp:Label ID="labelWelcome" runat="server" Text="[labelWelcome]"></asp:Label>
+            |
+            <asp:LinkButton ID="linkLogout" runat="server" Text="Logout/Change Name" 
+                onclick="linkLogout_Click"></asp:LinkButton>
             <br />
             <br />
             <asp:Label ID="labelNewBoard" runat="server">New room:</asp:Label>

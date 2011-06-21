@@ -9,9 +9,9 @@ public partial class entrance : System.Web.UI.Page
 {
     protected void Page_Load(object sender, EventArgs e)
     {
-        if (CommonState.UserNick != null)
+        if (CommonState.PersonName != null)
         {
-            labelWelcome.Text = "Welcome: " + CommonState.UserNick;
+            labelWelcome.Text = "Welcome: " + CommonState.PersonName;
         }
         else
         {
@@ -19,6 +19,11 @@ public partial class entrance : System.Web.UI.Page
             return;
         }
 
+        RefreshBoardList();
+    }
+
+    void RefreshBoardList()
+    {
         Dictionary<string, Board> boardList = CommonState.Boards;
         foreach (KeyValuePair<String, Board> b in boardList)
 	    {
@@ -43,8 +48,7 @@ public partial class entrance : System.Web.UI.Page
     void Board_Click(object sender, EventArgs e)
     {
         string boardId = ((Control)sender).ID;
-        System.Diagnostics.Debug.WriteLine("board id is: " + boardId);
-        //Response.Redirect(Request.Url.AbsolutePath.ToString() + "test");
+        Debug.WriteLine("clicked board: " + boardId);
         Response.Redirect("~/board.aspx?id=" + boardId);
     }
 
@@ -53,10 +57,12 @@ public partial class entrance : System.Web.UI.Page
         Board board = new Board();
         board.Nickname = textboxBoardNick.Text;
         // debug only:
-        if (CommonState.UserGuid != null)
+        if (CommonState.PersonId != null)
         {
-            board.PlayerWhiteId = CommonState.UserGuid;
+            // TEMP
+            board.PlayerWhiteId = CommonState.PersonId;
             board.CurrTurn = board.PlayerWhiteId;
+            board.Players++;
         }
         else
         {
@@ -65,11 +71,14 @@ public partial class entrance : System.Web.UI.Page
         }
         // debug end
 
-        // EPIC, because i new a new one at last in construct
-        //Debug.WriteLine("Now board is null? " + board.chessboard[0, 0].GridType);
         Dictionary<string, Board> boardList = CommonState.Boards;
         boardList.Add(board.Id, board);
         CommonState.Boards = boardList;
         Response.Redirect("~/board.aspx?id=" + board.Id);
+    }
+    protected void linkLogout_Click(object sender, EventArgs e)
+    {
+        CommonState.PersonId = null;
+        CommonState.PersonName = null;
     }
 }

@@ -15,7 +15,7 @@ public partial class board : System.Web.UI.Page
 {
     protected void Page_Load(object sender, EventArgs e)
     {
-        if (CommonState.UserNick == null)
+        if (CommonState.PersonName == null)
         {
             Response.Redirect("~/login.aspx");
             return;
@@ -49,9 +49,10 @@ public partial class board : System.Web.UI.Page
 
         // TEMP
         if (String.IsNullOrEmpty(board.PlayerBlackId) &&
-            !CommonState.UserGuid.Equals(board.PlayerWhiteId))
+            !CommonState.PersonId.Equals(board.PlayerWhiteId))
         {
-            board.PlayerBlackId = CommonState.UserGuid;
+            board.PlayerBlackId = CommonState.PersonId;
+            board.Players++;
         }
 
         GenerateAndRestoreChessboard(board);
@@ -110,7 +111,7 @@ public partial class board : System.Web.UI.Page
         }
 
         // is user logged in?
-        if (CommonState.UserGuid == null)
+        if (CommonState.PersonId == null)
         {
             Response.Redirect("~/login.aspx");
             return;
@@ -119,9 +120,9 @@ public partial class board : System.Web.UI.Page
         Debug.WriteLine("White is: " + board.PlayerWhiteId);
         Debug.WriteLine("Black is: " + board.PlayerBlackId);
         Debug.WriteLine("Turn is : " + board.CurrTurn);
-        Debug.WriteLine("You are : " + CommonState.UserGuid);
+        Debug.WriteLine("You are : " + CommonState.PersonId);
         // check if the user can move
-        if (board.IsTurnOf(CommonState.UserGuid))
+        if (board.IsTurnOf(CommonState.PersonId))
         {
             // make move
             Debug.WriteLine("making move");
