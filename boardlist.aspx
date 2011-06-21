@@ -14,7 +14,7 @@
         <div>
             <asp:Label ID="labelWelcome" runat="server" Text="[labelWelcome]"></asp:Label>
             |
-            <asp:LinkButton ID="linkLogout" runat="server" Text="Logout/Change Name" 
+            <asp:LinkButton ID="linkLogout" runat="server" Text="Logout/Change name" 
                 onclick="linkLogout_Click"></asp:LinkButton>
             <br />
             <br />

@@ -10,22 +10,43 @@
 <body>
     <form id="form1" runat="server">
         <asp:ScriptManager ID="ScriptManager1" EnablePartialRendering="true" runat="server" />
-		<asp:Timer ID="Timer1" runat="server" Interval="1500"></asp:Timer>
+		<asp:Timer ID="TimerBoard" runat="server" Interval="1500"></asp:Timer>
+        <asp:Timer ID="TimerPersons" runat="server" Interval="3000"></asp:Timer>
 
         <asp:LinkButton ID="linkBackToBoardList" Text="<< back" runat="server" 
-            onclick="linkBackToBoardList_Click" />
-        &nbsp;|
+            onclick="linkBackToBoardList_Click" />&nbsp;|
 		<asp:Button ID="buttonRestart" runat="server" Text="Restart" />
         <br />
         <br />
-		<asp:UpdatePanel ID="UpdatePanel1" UpdateMode="Always" runat="server">
-			<ContentTemplate>
-                <asp:PlaceHolder ID="ChessboardHolder" runat="server" />
-            </ContentTemplate>
-			<Triggers>
-				<asp:AsyncPostBackTrigger ControlID="Timer1" EventName="Tick" />
-			</Triggers>
-		</asp:UpdatePanel>
+        <table border="0">
+            <tr>
+                <td>
+                    <asp:UpdatePanel ID="UpdatePanel1" UpdateMode="Always" runat="server">
+			            <ContentTemplate>
+                            <asp:PlaceHolder ID="ChessboardHolder" runat="server" />
+                        </ContentTemplate>
+			            <Triggers>
+				            <asp:AsyncPostBackTrigger ControlID="TimerBoard" EventName="Tick" />
+			            </Triggers>
+		            </asp:UpdatePanel>
+                </td>
+                <td>
+                    <asp:UpdatePanel ID="UpdatePanel2" UpdateMode="Always" runat="server">
+			            <ContentTemplate>
+                            <asp:Literal Text="Players" runat="server" />
+                            <asp:BulletedList ID="ListPlayers" runat="server" />
+                            <br />
+                            <asp:Literal Text="Viewers" runat="server" />
+                            <asp:BulletedList ID="ListViewers" runat="server" />
+                        </ContentTemplate>
+			            <Triggers>
+				            <asp:AsyncPostBackTrigger ControlID="TimerPersons" EventName="Tick" />
+			            </Triggers>
+		            </asp:UpdatePanel>
+                </td>
+            </tr>
+        </table>
+		
     </form>
 </body>
 </html>

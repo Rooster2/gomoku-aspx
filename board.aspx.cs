@@ -15,12 +15,6 @@ public partial class board : System.Web.UI.Page
 {
     protected void Page_Load(object sender, EventArgs e)
     {
-        if (CommonState.PersonName == null)
-        {
-            Response.Redirect("~/login.aspx");
-            return;
-        }
-
         if (IsPostBack)
         {
             Debug.WriteLine("Is Post Back");
@@ -29,6 +23,17 @@ public partial class board : System.Web.UI.Page
         {
             Debug.WriteLine("Is First Run");
         }
+
+        // test if user is online
+        if (CommonState.PersonId == null ||
+            !Person.IsOnline(CommonState.PersonId))
+        {
+            Response.Redirect("~/login.aspx");
+            return;
+        }
+
+        // keep person alive on this board
+        Board.KeepPersonAlive(CommonState.CurrBoardId, CommonState.PersonId);
 
         // test if board exists or redirect
         if (CommonState.CurrBoardId == null)
@@ -56,6 +61,9 @@ public partial class board : System.Web.UI.Page
         }
 
         GenerateAndRestoreChessboard(board);
+        var list = Board.ListUsersOnBoard(CommonState.CurrBoardId);
+        ListViewers.DataSource = list;
+        ListViewers.DataBind();
     }
 
     void GenerateAndRestoreChessboard(Board board)

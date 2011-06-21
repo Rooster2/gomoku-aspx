@@ -10,11 +10,11 @@
 <body>
     <form id="form1" runat="server">
     <div>
-        <asp:Label ID="labelErrorMsg" runat="server" />
+        <asp:Label ID="labelErrorMsg" Visible="false" CssClass="loginerror" runat="server" />
         <br />
         <asp:Label ID="labelName" runat="server">Your name:</asp:Label>
         <asp:TextBox ID="textboxName" runat="server"></asp:TextBox>
-        <br />
+        
         <!--
         <asp:Label ID="labelPassword" runat="server">Password:</asp:Label>
         <asp:TextBox ID="textboxPassword" TextMode="Password" runat="server"></asp:TextBox>

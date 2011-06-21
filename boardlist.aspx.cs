@@ -9,16 +9,25 @@ public partial class entrance : System.Web.UI.Page
 {
     protected void Page_Load(object sender, EventArgs e)
     {
-        if (CommonState.PersonName != null)
+        Debug.WriteLine("checking if user is online");
+        if (Person.IsOnline(CommonState.PersonId))
         {
-            labelWelcome.Text = "Welcome: " + CommonState.PersonName;
+            string name = Person.FindNameById(CommonState.PersonId);
+            if (name != null)
+            {
+                labelWelcome.Text = "Welcome: " + name;
+            }
+            else
+            {
+                Response.Redirect("~/login.aspx");
+                return;
+            }
         }
         else
         {
             Response.Redirect("~/login.aspx");
             return;
         }
-
         RefreshBoardList();
     }
 
@@ -30,7 +39,7 @@ public partial class entrance : System.Web.UI.Page
             LinkButton link = new LinkButton();
             link.ID = b.Value.Id;
             link.Click += new EventHandler(Board_Click);
-            link.Text = "· " + b.Value.Nickname +
+            link.Text = ">> " + b.Value.Nickname +
                 " (" + b.Value.Players.ToString() + " Players, " +
                 b.Value.Viewers.ToString() + " Viewers)";
             if (Debug.IsDebug)
@@ -76,9 +85,19 @@ public partial class entrance : System.Web.UI.Page
         CommonState.Boards = boardList;
         Response.Redirect("~/board.aspx?id=" + board.Id);
     }
+
     protected void linkLogout_Click(object sender, EventArgs e)
     {
+        string personId = CommonState.PersonId;
         CommonState.PersonId = null;
-        CommonState.PersonName = null;
+        // delete it from db, if it long term disconnect and someone
+        // is using same name, but the id is diff, so it's safe
+        if (!String.IsNullOrEmpty(personId) &&
+            Person.FindPersonById(personId) != null)
+        {
+            Person.DeletePersonById(personId);
+        }
+        // optional
+        Response.Redirect("~/");
     }
 }

@@ -11,13 +11,14 @@ public partial class login : System.Web.UI.Page
 {
     protected void Page_Load(object sender, EventArgs e)
     {
+        /*
         if (!IsPostBack)
         {
             if (CommonState.PersonName != null)
             {
                 textboxName.Text = CommonState.PersonName;
             }
-        }
+        }*/
     }
 
     protected void buttonLogin_Click(object sender, EventArgs e)
@@ -32,16 +33,23 @@ public partial class login : System.Web.UI.Page
         }
 
         // check person existence / kill it if session out
-        if (Person.IsExisted(name))
+        Person p = Person.FindPersonByName(name);
+        if (p != null)
         {
-            if (Person.IsOnline(name))
+            Debug.WriteLine("there is a person named: " + name);
+            // so username existed, we should dig further
+            Debug.WriteLine(p.LastActivity.ToString() + " - " + CommonState.EpochTime + " = " +
+                (p.LastActivity - CommonState.EpochTime).ToString());
+            if (Person.IsOnline(p.LastActivity))
             {
+                Debug.WriteLine("and it is online");
                 errorMsg = String.Format("The name \"{0}\" is already in use.", name);
                 goto ShowError;
             }
             else
             {
-                if (Person.KillByName(name) == false)
+                Debug.WriteLine("and it is sessioned out");
+                if (Person.DeletePersonById(p.Id) == false)
                 {
                     errorMsg = "looks like the man escaped (sql delete error?)";
                     goto ShowError;
@@ -50,10 +58,11 @@ public partial class login : System.Web.UI.Page
         }
 
         // add a person
+        Debug.WriteLine("no person named " + name + ", here we go!");
         string id = Guid.NewGuid().ToString();
         if (Person.SignUp(name, id) == true)
         {
-            CommonState.PersonName = name;
+            //CommonState.PersonName = name;
             CommonState.PersonId = id;
             Response.Redirect("~/boardlist.aspx");
             return;
@@ -63,10 +72,10 @@ public partial class login : System.Web.UI.Page
             errorMsg = "cannot sign you up (sql insert error?)";
             goto ShowError;
         }
-
+        
         // we love GOTO xD
     ShowError:
+        labelErrorMsg.Visible = true;
         labelErrorMsg.Text = errorMsg;
-        labelErrorMsg.BackColor = System.Drawing.Color.Yellow;
     }
 }

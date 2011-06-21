@@ -12,5 +12,6 @@ public class Configure
     public const int ROWS = 15;
     public const int COLS = 15;
     public const long CONNECTOIN_TIMEOUT = 20;
-    public const long SESSION_TIMEOUT = 20 * 60;
+    public const long SESSION_TIMEOUT = 1200;
+    public const long ISONLINE_CHECK_TIMEOUT = 10;
 }
