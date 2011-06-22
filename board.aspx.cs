@@ -24,16 +24,28 @@ public partial class board : System.Web.UI.Page
             Debug.WriteLine("Is First Run");
         }
 
-        // test if user is online
-        if (CommonState.PersonId == null ||
-            !Person.IsOnline(CommonState.PersonId))
+        Debug.WriteLine("checking if user is online");
+        if (Person.IsSessionAlive(CommonState.PersonId))
+        {
+            string name = Person.FindNameById(CommonState.PersonId);
+            if (name != null)
+            {
+                labelWelcome.Text = "Welcome: " + name;
+            }
+            else
+            {
+                Response.Redirect("~/login.aspx");
+                return;
+            }
+        }
+        else
         {
             Response.Redirect("~/login.aspx");
             return;
         }
 
         // keep person alive on this board
-        Board.KeepPersonAlive(CommonState.CurrBoardId, CommonState.PersonId);
+        Board.KeepPersonAliveOnBoard(CommonState.CurrBoardId, CommonState.PersonId);
 
         // test if board exists or redirect
         if (CommonState.CurrBoardId == null)
@@ -52,18 +64,124 @@ public partial class board : System.Web.UI.Page
         }
         this.Title = String.Format("Board: {0} ({1})", board.Nickname, board.Id);
 
-        // TEMP
-        if (String.IsNullOrEmpty(board.PlayerBlackId) &&
-            !CommonState.PersonId.Equals(board.PlayerWhiteId))
+        // show game progress
+        using (Literal l = new Literal())
         {
-            board.PlayerBlackId = CommonState.PersonId;
-            board.Players++;
+            if (board.IsGameOver())
+            {
+                Debug.WriteLine("Page_Load: game is over");
+                l.Text = "Winner is: " + Person.FindNameById(board.WinnerId);
+            }
+            else
+            {
+                Debug.WriteLine("show who's turn");
+                if (board.CurrTurn.Equals(board.PlayerWhiteId))
+                {
+                    l.Text = "White's turn";
+                }
+                else
+                {
+                    l.Text = "Black's turn";
+                }
+            }
+            WinnerIs.Controls.Add(l);
         }
+
+        // join buttons
+        // white
+        if (String.IsNullOrEmpty(board.PlayerWhiteId) ||
+            !Person.IsPersonOnBoard(board.Id, board.PlayerWhiteId))
+        {
+            board.PlayerWhiteId = String.Empty;
+            Button b = new Button();
+            b.ID = "White";
+            b.Click +=new EventHandler(JoinGame);
+            b.Text = "Participate in";
+            if (CommonState.PersonId.Equals(board.PlayerBlackId) ||
+                CommonState.PersonId.Equals(board.PlayerWhiteId))
+            {
+                b.Enabled = false;
+            }
+            WhiteSideHolder.Controls.Add(b);
+        }
+        else
+        {
+            Literal l = new Literal();
+            l.Text = Person.FindNameById(board.PlayerWhiteId);
+            WhiteSideHolder.Controls.Add(l);
+        }
+        
+        if (String.IsNullOrEmpty(board.PlayerBlackId) ||
+            !Person.IsPersonOnBoard(board.Id, board.PlayerBlackId))
+        {
+            board.PlayerBlackId = String.Empty;
+            Button b = new Button();
+            b.ID = "Black";
+            b.Click +=new EventHandler(JoinGame);
+            b.Text = "Participate in";
+            if (CommonState.PersonId.Equals(board.PlayerBlackId) ||
+                CommonState.PersonId.Equals(board.PlayerWhiteId))
+            {
+                b.Enabled = false;
+            }
+            BlackSideHolder.Controls.Add(b);
+        }
+        else
+        {
+            Literal l = new Literal();
+            l.Text = Person.FindNameById(board.PlayerBlackId);
+            BlackSideHolder.Controls.Add(l);
+        }
+        // end join buttons
+
+        //// TEMP
+        //if (String.IsNullOrEmpty(board.PlayerBlackId) &&
+        //    !CommonState.PersonId.Equals(board.PlayerWhiteId))
+        //{
+        //    board.PlayerBlackId = CommonState.PersonId;
+        //    board.Players++;
+        //}
 
         GenerateAndRestoreChessboard(board);
         var list = Board.ListUsersOnBoard(CommonState.CurrBoardId);
         ListViewers.DataSource = list;
         ListViewers.DataBind();
+    }
+
+    void JoinGame(object sender, EventArgs e)
+    {
+        string side = ((Control)sender).ID;
+        Board board = CommonState.GetBoardById(CommonState.CurrBoardId);
+        if (side.Equals("White"))
+        {
+            board.PlayerWhiteId = CommonState.PersonId;
+            // someone disconn dirty hack
+            if (board.CurrTurn.Equals(board.PlayerBlackId))
+            {
+                ;
+            }
+            else
+            {
+                board.CurrTurn = board.PlayerWhiteId;
+            }
+        }
+        else if (side.Equals("Black"))
+        {
+            board.PlayerBlackId = CommonState.PersonId;
+            if (board.CurrTurn.Equals(board.PlayerWhiteId))
+            {
+                ;
+            }
+            else
+            {
+                board.CurrTurn = board.PlayerBlackId;
+            }
+        }
+
+        if ((board.IsBranyNewBoard || board.IsGameOver()) && board.IsReady())
+        {
+            board.NewGameStartInit();
+        }
     }
 
     void GenerateAndRestoreChessboard(Board board)
@@ -125,6 +243,17 @@ public partial class board : System.Web.UI.Page
             return;
         }
 
+        if (board.IsGameOver())
+        {
+            Debug.WriteLine("game is over, don't touch");
+            return;
+        }
+        if (!board.IsReady())
+        {
+            Debug.WriteLine("someone is missing");
+            return;
+        }
+
         Debug.WriteLine("White is: " + board.PlayerWhiteId);
         Debug.WriteLine("Black is: " + board.PlayerBlackId);
         Debug.WriteLine("Turn is : " + board.CurrTurn);
@@ -135,6 +264,7 @@ public partial class board : System.Web.UI.Page
             // make move
             Debug.WriteLine("making move");
             board.MakeMove(i, j);
+            board.EvaluateAt(i, j);
             board.ToggleTurn();
             // TODO
             //CommonState.SaveBoard(board);

@@ -17,7 +17,7 @@ public class Person
     public string Name { get; set; }
     public long LastActivity { get; set; }
 	
-    public static bool IsOnline(string id)
+    public static bool IsSessionAlive(string id)
     {
         if (String.IsNullOrEmpty(id))
         {
@@ -26,20 +26,54 @@ public class Person
         Person p = Person.FindPersonByACol(COL_ID, id);
         if (p != null)
         {
-            return IsOnline(p.LastActivity);
+            return IsSessionAlive(p.LastActivity);
         }
         return false;
     }
 
-    public static bool IsOnline(long lastActivity)
+    public static bool IsSessionAlive(long lastActivity)
     {
-        if (lastActivity == null)
-        {
-            return false;
-        }
         if ((lastActivity + Configure.SESSION_TIMEOUT) > CommonState.EpochTime)
         {
             return true;
+        }
+        return false;
+    }
+
+    public static void KeepPersonAlive(string personId)
+    {
+    }
+
+    public static bool IsPersonOnBoard(string boardId, string personId)
+    {
+        string query = "SELECT * FROM [boards] WHERE board_id=@boardId AND person_id=@personId";
+
+        if (String.IsNullOrEmpty(boardId) || String.IsNullOrEmpty(personId))
+        {
+            return false;
+        }
+        using (SqlCeConnection conn = new SqlCeConnection())
+        {
+            conn.ConnectionString = CommonState.ConnectionString;
+            conn.Open();
+            using (SqlCeCommand cmd = new SqlCeCommand(null, conn))
+            {
+                cmd.CommandText = query;
+                cmd.Parameters.Add("@boardId", boardId);
+                cmd.Parameters.Add("@personId", personId);
+                cmd.Prepare();
+                using (SqlCeDataReader reader = cmd.ExecuteReader())
+                {
+                    if (reader.Read())
+                    {
+                        long last = (long)reader["person_lastactivity"];
+                        if (last > (CommonState.EpochTime - Configure.CONNECTOIN_TIMEOUT))
+                        {
+                            return true;
+                        }
+                    }
+                }
+            }
         }
         return false;
     }

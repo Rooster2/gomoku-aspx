@@ -10,7 +10,7 @@ public partial class entrance : System.Web.UI.Page
     protected void Page_Load(object sender, EventArgs e)
     {
         Debug.WriteLine("checking if user is online");
-        if (Person.IsOnline(CommonState.PersonId))
+        if (Person.IsSessionAlive(CommonState.PersonId))
         {
             string name = Person.FindNameById(CommonState.PersonId);
             if (name != null)
@@ -65,20 +65,20 @@ public partial class entrance : System.Web.UI.Page
     {
         Board board = new Board();
         board.Nickname = textboxBoardNick.Text;
-        // debug only:
-        if (CommonState.PersonId != null)
-        {
-            // TEMP
-            board.PlayerWhiteId = CommonState.PersonId;
-            board.CurrTurn = board.PlayerWhiteId;
-            board.Players++;
-        }
-        else
-        {
-            Response.Redirect("~/login.aspx");
-            return;
-        }
-        // debug end
+        //// debug only:
+        //if (CommonState.PersonId != null)
+        //{
+        //    // TEMP
+        //    board.PlayerWhiteId = CommonState.PersonId;
+        //    board.CurrTurn = board.PlayerWhiteId;
+        //    board.Players++;
+        //}
+        //else
+        //{
+        //    Response.Redirect("~/login.aspx");
+        //    return;
+        //}
+        //// debug end
 
         Dictionary<string, Board> boardList = CommonState.Boards;
         boardList.Add(board.Id, board);

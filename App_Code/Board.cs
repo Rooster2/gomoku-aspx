@@ -11,6 +11,7 @@ public class Board
 {
     static string COL_BID = "board_id";
     static string COL_PID = "person_id";
+    static string COL_PNAME = "person_name";
     static string COL_LAST = "person_lastactivity";
 
     public string Id { get; set; }
@@ -22,8 +23,30 @@ public class Board
     public string CurrTurn { get; set; }
     public string PlayerWhiteId { get; set; }
     public string PlayerBlackId { get; set; }
+    public string WinnerId { get; set; }
+    public bool IsBranyNewBoard { get; set; }
 
     public Board()
+    {
+        CurrTurn = String.Empty;
+        PlayerWhiteId = String.Empty;
+        PlayerBlackId = String.Empty;
+        WinnerId = String.Empty;
+        chessboard = new Chessman[Configure.ROWS, Configure.COLS];
+        for (int i = 0; i < Configure.ROWS; i++)
+        {
+            for (int j = 0; j < Configure.COLS; j++)
+            {
+                chessboard[i, j] = new Chessman();
+            }
+        }
+        Id = Guid.NewGuid().ToString();
+        Players = 0;
+        Viewers = 0;
+        IsBranyNewBoard = true;
+    }
+
+    public void NewAGame()
     {
         CurrTurn = String.Empty;
         PlayerWhiteId = String.Empty;
@@ -36,15 +59,26 @@ public class Board
                 chessboard[i, j] = new Chessman();
             }
         }
-        Id = Guid.NewGuid().ToString();
-        Players = 0;
-        Viewers = 0;
+    }
+
+    public void NewGameStartInit()
+    {
+        WinnerId = String.Empty;
+        CurrTurn = PlayerWhiteId;
+        IsBranyNewBoard = false;
     }
 
     public static List<string> ListUsersOnBoard(string boardId)
     {
         string query = String.Format("SELECT * FROM [boards] WHERE {0}=@boardId AND {1} > {2}",
             COL_BID, COL_LAST, CommonState.EpochTime - Configure.CONNECTOIN_TIMEOUT);
+        string query2 =
+            "SELECT persons.person_name " +
+            "FROM persons INNER JOIN " +
+            "         boards ON boards.person_id = persons.person_id " +
+            "WHERE boards.board_id=@boardId " +
+            "         AND boards.person_lastactivity > " +
+            (CommonState.EpochTime - Configure.CONNECTOIN_TIMEOUT).ToString();
         List<string> list = new List<string>();
         using (SqlCeConnection conn = new SqlCeConnection())
         {
@@ -52,14 +86,14 @@ public class Board
             conn.Open();
             using (SqlCeCommand cmd = new SqlCeCommand(null, conn))
             {
-                cmd.CommandText = query;
+                cmd.CommandText = query2;
                 cmd.Parameters.Add("@boardId", boardId);
                 cmd.Prepare();
                 using (SqlCeDataReader reader = cmd.ExecuteReader())
                 {
                     while (reader.Read())
                     {
-                        list.Add((string)reader[COL_PID]);
+                        list.Add((string)reader[COL_PNAME]);
                     }
                 }
             }
@@ -67,7 +101,7 @@ public class Board
         return list;
     }
 
-    public static void KeepPersonAlive(string boardId, string personId)
+    public static void KeepPersonAliveOnBoard(string boardId, string personId)
     {
         string query = String.
             Format("SELECT * FROM [boards] WHERE {0}=@boardId AND {1}=@personId", COL_BID, COL_PID);
@@ -75,8 +109,8 @@ public class Board
             Format("UPDATE [boards] SET {0}=@last WHERE {1}=@boardId AND {2}=@personId", COL_LAST, COL_BID, COL_PID);
         string add = String.
             Format("INSERT INTO [boards] ({0}, {1}, {2}) VALUES (@boardId, @personId, @last)", COL_BID, COL_PID, COL_LAST);
-        //string updatePerson = String.
-        //    Format("UPDATE [persons] SET {0}=@last WHERE {1}=@boardId AND {2}=@personId", COL_LAST, COL_BID, COL_PID);
+        string updatePerson = String.
+            Format("UPDATE [persons] SET {0}=@last WHERE {1}=@personId", COL_LAST, COL_PID);
         
         using (SqlCeConnection conn = new SqlCeConnection())
         {
@@ -93,33 +127,43 @@ public class Board
                 {
                     if (reader.Read())
                     {
-                        goto UPDATE;
+                        cmd.CommandText = update;
+                        cmd.ExecuteNonQuery();
                     }
                     else
                     {
-                        goto INSERT;
+                        cmd.CommandText = add;
+                        cmd.ExecuteNonQuery();
                     }
                 }
-
-            INSERT:
-                cmd.CommandText = add;
-                //cmd.Parameters.Add("@boardId", boardId);
-                //cmd.Parameters.Add("@personId", personId);
-                //cmd.Parameters.Add("@last", CommonState.EpochTime);
-                cmd.Prepare();
+                
+                // now update person table
+                cmd.CommandText = updatePerson;
                 cmd.ExecuteNonQuery();
-                return;
-
-            UPDATE:
-                cmd.CommandText = update;
-                //cmd.Parameters.Add("@boardId", boardId);
-                //cmd.Parameters.Add("@personId", personId);
-                //cmd.Parameters.Add("@last", CommonState.EpochTime);
-                cmd.Prepare();
-                cmd.ExecuteNonQuery();
-                return;
             }
         }
+    }
+
+    public bool IsGameOver()
+    {
+        if (String.IsNullOrEmpty(WinnerId))
+        {
+            return false;
+        }
+        else
+        {
+            return true;
+        }
+    }
+
+    public bool IsReady()
+    {
+        if (!String.IsNullOrEmpty(PlayerWhiteId) &&
+            !String.IsNullOrEmpty(PlayerBlackId))
+        {
+            return true;
+        }
+        return false;
     }
 
     public bool IsTurnOf(string playerId)
@@ -162,5 +206,12 @@ public class Board
         {
             chessboard[i, j].GridType = Chessman.GRID_WHITE;
         }
+    }
+
+    public void EvaluateAt(int x, int y)
+    {
+        // if game over
+        //WinnerId = CurrTurn;
+        //NewAGame();
     }
 }

@@ -40,7 +40,7 @@ public partial class login : System.Web.UI.Page
             // so username existed, we should dig further
             Debug.WriteLine(p.LastActivity.ToString() + " - " + CommonState.EpochTime + " = " +
                 (p.LastActivity - CommonState.EpochTime).ToString());
-            if (Person.IsOnline(p.LastActivity))
+            if (Person.IsSessionAlive(p.LastActivity))
             {
                 Debug.WriteLine("and it is online");
                 errorMsg = String.Format("The name \"{0}\" is already in use.", name);

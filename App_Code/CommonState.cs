@@ -17,7 +17,7 @@ public class CommonState
         }
     }
 
-    public static int EpochTime
+    public static long EpochTime
     {
         get
         {
