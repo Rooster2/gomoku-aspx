@@ -201,7 +201,7 @@ public class Board
 
     public void EvaluateAt(int row, int col)
     {
-        string theChessmanType = chessboard[row, col].GridImage;
+        int theChessmanType = chessboard[row, col].GridType;
         int r, c, consCount;
 
         // horiz, left
@@ -209,7 +209,7 @@ public class Board
         c = col - 1;
         consCount = 0;
         while (c >= 0 && c >= col - 4 &&
-            chessboard[row, c].GridImage.Equals(theChessmanType))
+            chessboard[row, c].GridType == theChessmanType)
         {
             consCount++;
             c--;
@@ -217,7 +217,7 @@ public class Board
         // horiz right
         c = col + 1;
         while (c < Configure.COLS && c <= col + 4 &&
-            chessboard[row, c].GridImage.Equals(theChessmanType))
+            chessboard[row, c].GridType == theChessmanType)
         {
             consCount++;
             c++;
@@ -230,7 +230,7 @@ public class Board
         c = col;
         consCount = 0;
         while (r >= 0 && r >= row - 4 &&
-            chessboard[r, col].GridImage.Equals(theChessmanType))
+            chessboard[r, col].GridType == theChessmanType)
         {
             consCount++;
             r--;
@@ -238,7 +238,7 @@ public class Board
         // vertical down
         r = row + 1;
         while (r < Configure.ROWS && r <= row + 4 &&
-            chessboard[r, col].GridImage.Equals(theChessmanType))
+            chessboard[r, col].GridType == theChessmanType)
         {
             consCount++;
             r++;
@@ -251,7 +251,7 @@ public class Board
         c = col - 1;
         consCount = 0;
         while (r >= 0 && c >= 0 && r >= row - 4 &&
-            chessboard[r, c].GridImage.Equals(theChessmanType))
+            chessboard[r, c].GridType == theChessmanType)
         {
             consCount++;
             r--;
@@ -261,7 +261,7 @@ public class Board
         r = row + 1;
         c = col + 1;
         while (r < Configure.ROWS && c < Configure.COLS && r <= row + 4 &&
-            chessboard[r, c].GridImage.Equals(theChessmanType))
+            chessboard[r, c].GridType == theChessmanType)
         {
             consCount++;
             r++;
@@ -275,7 +275,7 @@ public class Board
         c = col + 1;
         consCount = 0;
         while (r >= 0 && c < Configure.COLS && r >= row - 4 &&
-            chessboard[r, c].GridImage.Equals(theChessmanType))
+            chessboard[r, c].GridType == theChessmanType)
         {
             consCount++;
             r--;
@@ -285,7 +285,7 @@ public class Board
         r = row + 1;
         c = col - 1;
         while (r < Configure.ROWS && c >= 0 && r <= row + 4 &&
-            chessboard[r, c].GridImage.Equals(theChessmanType))
+            chessboard[r, c].GridType == theChessmanType)
         {
             consCount++;
             r++;
