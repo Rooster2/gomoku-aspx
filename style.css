@@ -11,7 +11,7 @@ input
     font-size:20px;
 }
 
-td, tr, img
+td, tr, img, table
 {
     padding: 0px; margin: 0px; border: none;
 }
@@ -59,7 +59,45 @@ table
     height:32px;
     width:32px;
     background-image:url(images/grid-bg-generic-32x.png);
+    background-repeat:no-repeat;
     background-size:32px 32px;
     
     /*cursor:pointer;*/
+}
+
+
+border-upper
+{
+    height:16px;
+    width:480px;
+    background-image:url(images/border-up-32x.png);
+    background-repeat:no-repeat;
+    background-size:480px 16px;
+}
+
+.border-lower
+{
+    height:16px;
+    width:480px;
+    background-image:url(images/border-down-32x.png);
+    background-repeat:no-repeat;
+    background-size:480px 16px;
+}
+
+.border-left
+{
+    height:480px;
+    width:16px;
+    background-image:url(images/border-left-32x.png);
+    background-repeat:no-repeat;
+    background-size:16px 480px;
+}
+
+.border-right
+{
+    height:480px;
+    width:16px;
+    background-image:url(images/border-right-32x.png);
+    background-repeat:no-repeat;
+    background-size:16px 480px;
 }

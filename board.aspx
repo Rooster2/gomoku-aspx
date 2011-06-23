@@ -6,21 +6,6 @@
 <head runat="server">
     <link href="style.css" rel="stylesheet" type="text/css" />
     <title>Chessboard</title>
-    <style type="text/css">
-        .style1
-        {
-            width: 64px;
-            height: 338px;
-        }
-        .style2
-        {
-            height: 338px;
-        }
-        .style3
-        {
-            width: 64px;
-        }
-    </style>
     </head>
 <body>
     <form id="form1" runat="server">
@@ -43,27 +28,46 @@
                 <asp:PlaceHolder ID="WinnerIs" runat="server"></asp:PlaceHolder>
             </ContentTemplate>
         </asp:UpdatePanel>
+
         <br />
+
         <table>
             <tr>
-                <td class="style3">
+                <td></td>
+                <td>
+                    <table>
+                        <tr>
+                            <td class="border-ul"></td>
+                            <td class="border-upper"></td>
+                            <td class="border-ur"></td>
+                        </tr>
+                        <tr>
+                            <td class="border-left"></td>
+                            <td class="board">
+                                <asp:UpdatePanel ID="UpdatePanel1" UpdateMode="Always" runat="server">
+			                        <ContentTemplate>
+                                        <asp:PlaceHolder ID="ChessboardHolder" runat="server" />
+                                    </ContentTemplate>
+			                        <Triggers>
+				                        <asp:AsyncPostBackTrigger ControlID="TimerBoard" EventName="Tick" />
+			                        </Triggers>
+		                        </asp:UpdatePanel>
+                            </td>
+                            <td class="border-right"></td>
+                        </tr>
+                        <tr>
+                            <td class="border-ll"></td>
+                            <td class="border-lower"></td>
+                            <td class="border-lr"></td>
+                        </tr>
+                    </table>
                 </td>
-                <td class="style2">
-                    <asp:UpdatePanel ID="UpdatePanel1" UpdateMode="Always" runat="server">
-			            <ContentTemplate>
-                            <asp:PlaceHolder ID="ChessboardHolder" runat="server" />
-                        </ContentTemplate>
-			            <Triggers>
-				            <asp:AsyncPostBackTrigger ControlID="TimerBoard" EventName="Tick" />
-			            </Triggers>
-		            </asp:UpdatePanel>
+                <td>
                 </td>
-                <td class="style1">
-                </td>
-                <td class="style2">
+                <td>
                     <asp:UpdatePanel ID="UpdatePanel2" UpdateMode="Always" runat="server">
 			            <ContentTemplate>
-                        <!--
+                            <!--
                             <asp:Literal Text="Players" runat="server" />
                             <asp:BulletedList ID="ListPlayers" runat="server" />
                             <br />
