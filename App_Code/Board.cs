@@ -208,10 +208,103 @@ public class Board
         }
     }
 
-    public void EvaluateAt(int x, int y)
+    public void EvaluateAt(int row, int col)
     {
-        // if game over
-        //WinnerId = CurrTurn;
-        //NewAGame();
+        string theChessmanType = chessboard[row, col].GridType;
+        int[] aRow = new int[9];
+        int index = 0;
+        int startCol = 0;
+        int endCol = 0;
+        int startRow = 0;
+        int endRow = 0;
+        int len = 0;
+        
+        // horizontal
+        // horizontal
+        // horizontal
+
+        if (col < 4)
+            startCol = 0;
+        else
+            startCol = col - 4;
+
+        if ((col + 4) >= Configure.COLS)
+            endCol = Configure.COLS - 1;
+        else
+            endCol = col + 4;
+
+        index = 0;
+        for (int i = startCol; i <= endCol; i++)
+        {
+            if (chessboard[row, i].GridType.Equals(theChessmanType))
+                aRow[index] = 1;
+            else
+                aRow[index] = 0;
+
+            index++;
+        }
+        for (int i = index; i < 9; i++)
+            aRow[i] = 0;
+
+        // validate
+        if (FiveInARow(aRow))
+            goto GAMEOVER;
+
+        // vertical
+        // vertical
+        // vertical
+
+        if (row < 4)
+            startCol = 0;
+        else
+            startCol = row - 4;
+
+        if ((row + 4) >= Configure.ROWS)
+            endCol = Configure.ROWS - 1;
+        else
+            endCol = row + 4;
+
+        index = 0;
+        for (int i = startCol; i <= endCol; i++)
+        {
+            if (chessboard[i, col].GridType.Equals(theChessmanType))
+                aRow[index] = 1;
+            else
+                aRow[index] = 0;
+            index++;
+        }
+        for (int i = index; i < 9; i++)
+            aRow[i] = 0;
+
+        // validate
+        if (FiveInARow(aRow))
+            goto GAMEOVER;
+
+        // //////////////////
+
+        // nope
+        return;
+
+        // found a winner, congrets!
+    GAMEOVER:
+        WinnerId = CurrTurn;
+        NewAGame();
+    }
+
+    private bool FiveInARow(int[] aRow)
+    {
+        for (int i = 0; i <= aRow.Length - 5; i++)
+        {
+            int val = 1;
+            for (int j = i; j < i + 5; j++)
+            {
+                val *= aRow[j];
+            }
+            if (val == 1)
+            {
+                return true;
+            }
+        }
+        return false;
     }
 }
