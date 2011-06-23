@@ -62,15 +62,22 @@ public partial class board : System.Web.UI.Page
             Response.Redirect("~/boardlist.aspx");
             return;
         }
-        this.Title = String.Format("Board: {0} ({1})", board.Nickname, board.Id);
+
+        // set page title
+        this.Title = "Gomoku - Board: " + board.Nickname;
+        if (Debug.IsDebug)
+            this.Title += String.Format(" ({0})", board.Id);
 
         // show game progress
         using (Literal l = new Literal())
         {
-            if (board.IsGameOver())
+            if (board.IsGameOver)
             {
-                Debug.WriteLine("Page_Load: game is over");
-                l.Text = "Winner is: " + Person.FindNameById(board.WinnerId);
+                if (!String.IsNullOrEmpty(board.WinnerId))
+                {
+                    Debug.WriteLine("Page_Load: game is over");
+                    l.Text = "Winner is: " + Person.FindNameById(board.WinnerId);
+                }
             }
             else
             {
@@ -133,19 +140,22 @@ public partial class board : System.Web.UI.Page
             BlackSideHolder.Controls.Add(l);
         }
         // end join buttons
-
-        //// TEMP
-        //if (String.IsNullOrEmpty(board.PlayerBlackId) &&
-        //    !CommonState.PersonId.Equals(board.PlayerWhiteId))
-        //{
-        //    board.PlayerBlackId = CommonState.PersonId;
-        //    board.Players++;
-        //}
-
+        
         GenerateAndRestoreChessboard(board);
-        var list = Board.ListUsersOnBoard(CommonState.CurrBoardId);
+
+        // list persons
+        var list = Board.ListPersonOnBoard(CommonState.CurrBoardId);
         ListViewers.DataSource = list;
         ListViewers.DataBind();
+
+        // TODO: DIRTY HACK
+        int players = 0;
+        if (!String.IsNullOrEmpty(board.PlayerWhiteId))
+            players++;
+        if (!String.IsNullOrEmpty(board.PlayerBlackId))
+            players++;
+        board.Viewers = list.Count - players;
+        board.Players = players;
     }
 
     void JoinGame(object sender, EventArgs e)
@@ -178,7 +188,7 @@ public partial class board : System.Web.UI.Page
             }
         }
 
-        if ((board.IsBranyNewBoard || board.IsGameOver()) && board.IsReady())
+        if (board.IsGameOver && board.IsReady())
         {
             board.NewGameStartInit();
         }
@@ -202,7 +212,7 @@ public partial class board : System.Web.UI.Page
                 grid.Click += new ImageClickEventHandler(Grid_Click);
                 grid.Height = 32;
                 grid.Width = 32;
-                grid.ImageUrl = board.chessboard[i, j].GridType;
+                grid.ImageUrl = board.chessboard[i, j].GridImage;
                 //Button grid = new Button();
                 //grid.Click += new EventHandler(Grid_Click);
                 //grid.BorderStyle = BorderStyle.None;
@@ -243,7 +253,7 @@ public partial class board : System.Web.UI.Page
             return;
         }
 
-        if (board.IsGameOver())
+        if (board.IsGameOver)
         {
             Debug.WriteLine("game is over, don't touch");
             return;
@@ -282,6 +292,7 @@ public partial class board : System.Web.UI.Page
 
     protected void linkBackToBoardList_Click(object sender, EventArgs e)
     {
+        Board.KillPersonOnBoard(CommonState.CurrBoardId, CommonState.PersonId);
         Response.Redirect("~/boardlist.aspx");
     }
 }

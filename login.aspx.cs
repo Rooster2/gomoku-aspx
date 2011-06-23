@@ -19,6 +19,25 @@ public partial class login : System.Web.UI.Page
                 textboxName.Text = CommonState.PersonName;
             }
         }*/
+        labelErrorMsg.Text = "Please tell me your name:";
+        labelErrorMsg.Visible = true;
+        if (CommonState.PersonId != null)
+        {
+            Person p = Person.FindPersonById(CommonState.PersonId);
+            if (Person.IsSessionAlive(p.LastActivity))
+            {
+                labelName.Visible = false;
+                textboxName.Visible = false;
+                buttonLogin.Visible = false;
+                labelErrorMsg.Text = "Hello " + p.Name + ", You are already logged in";
+                labelErrorMsg.Visible = true;
+                linkLogout.Visible = true;
+                linkSeperator.Visible = true;
+                //linkLogout.Text = "Change name";
+                linkContinue.Visible = true;
+                //linkContinue.Text = "Take me to the Board List";
+            }
+        }
     }
 
     protected void buttonLogin_Click(object sender, EventArgs e)
@@ -77,5 +96,21 @@ public partial class login : System.Web.UI.Page
     ShowError:
         labelErrorMsg.Visible = true;
         labelErrorMsg.Text = errorMsg;
+    }
+    protected void linkContinue_Click(object sender, EventArgs e)
+    {
+        Response.Redirect("~/boardlist.aspx");
+    }
+    protected void linkLogout_Click(object sender, EventArgs e)
+    {
+        string personId = CommonState.PersonId;
+        if (!String.IsNullOrEmpty(personId) &&
+            Person.FindPersonById(personId) != null)
+        {
+            Person.DeletePersonById(personId);
+        }
+        CommonState.PersonId = null;
+        
+        Response.Redirect("~/");
     }
 }

@@ -24,7 +24,7 @@ public class Board
     public string PlayerWhiteId { get; set; }
     public string PlayerBlackId { get; set; }
     public string WinnerId { get; set; }
-    public bool IsBranyNewBoard { get; set; }
+    public bool IsGameOver { get; set; }
 
     public Board()
     {
@@ -43,14 +43,22 @@ public class Board
         Id = Guid.NewGuid().ToString();
         Players = 0;
         Viewers = 0;
-        IsBranyNewBoard = true;
+        IsGameOver = true;
     }
 
-    public void NewAGame()
+    public void ClearForANewGame()
     {
         CurrTurn = String.Empty;
         PlayerWhiteId = String.Empty;
         PlayerBlackId = String.Empty;
+        IsGameOver = true;
+    }
+
+    public void NewGameStartInit()
+    {
+        IsGameOver = false;
+        WinnerId = String.Empty;
+        CurrTurn = PlayerWhiteId;
         chessboard = new Chessman[Configure.ROWS, Configure.COLS];
         for (int i = 0; i < Configure.ROWS; i++)
         {
@@ -61,14 +69,7 @@ public class Board
         }
     }
 
-    public void NewGameStartInit()
-    {
-        WinnerId = String.Empty;
-        CurrTurn = PlayerWhiteId;
-        IsBranyNewBoard = false;
-    }
-
-    public static List<string> ListUsersOnBoard(string boardId)
+    public static List<string> ListPersonOnBoard(string boardId)
     {
         string query = String.Format("SELECT * FROM [boards] WHERE {0}=@boardId AND {1} > {2}",
             COL_BID, COL_LAST, CommonState.EpochTime - Configure.CONNECTOIN_TIMEOUT);
@@ -144,18 +145,6 @@ public class Board
         }
     }
 
-    public bool IsGameOver()
-    {
-        if (String.IsNullOrEmpty(WinnerId))
-        {
-            return false;
-        }
-        else
-        {
-            return true;
-        }
-    }
-
     public bool IsReady()
     {
         if (!String.IsNullOrEmpty(PlayerWhiteId) &&
@@ -189,7 +178,7 @@ public class Board
 
     public void MakeMove(int i, int j)
     {
-        if (Chessman.GRID_NOPE.Equals(chessboard[i, j].GridType))
+        if (Chessman.GRID_IMG_NOPE.Equals(chessboard[i, j].GridImage))
         {
             ;
         }
@@ -200,87 +189,110 @@ public class Board
         }
         if (CurrTurn.Equals(PlayerBlackId))
         {
-            chessboard[i, j].GridType = Chessman.GRID_BLACK;
+            chessboard[i, j].GridImage = Chessman.GRID_IMG_BLACK;
+            chessboard[i, j].GridType = Chessman.GRID_TYPE_BLACK;
         }
         else
         {
-            chessboard[i, j].GridType = Chessman.GRID_WHITE;
+            chessboard[i, j].GridImage = Chessman.GRID_IMG_WHITE;
+            chessboard[i, j].GridType = Chessman.GRID_TYPE_WHITE;
         }
     }
 
     public void EvaluateAt(int row, int col)
     {
-        string theChessmanType = chessboard[row, col].GridType;
-        int[] aRow = new int[9];
-        int index = 0;
-        int startCol = 0;
-        int endCol = 0;
-        int startRow = 0;
-        int endRow = 0;
-        int len = 0;
-        
-        // horizontal
-        // horizontal
-        // horizontal
+        string theChessmanType = chessboard[row, col].GridImage;
+        int r, c, consCount;
 
-        if (col < 4)
-            startCol = 0;
-        else
-            startCol = col - 4;
-
-        if ((col + 4) >= Configure.COLS)
-            endCol = Configure.COLS - 1;
-        else
-            endCol = col + 4;
-
-        index = 0;
-        for (int i = startCol; i <= endCol; i++)
+        // horiz, left
+        r = row;
+        c = col - 1;
+        consCount = 0;
+        while (c >= 0 && c >= col - 4 &&
+            chessboard[row, c].GridImage.Equals(theChessmanType))
         {
-            if (chessboard[row, i].GridType.Equals(theChessmanType))
-                aRow[index] = 1;
-            else
-                aRow[index] = 0;
-
-            index++;
+            consCount++;
+            c--;
         }
-        for (int i = index; i < 9; i++)
-            aRow[i] = 0;
-
-        // validate
-        if (FiveInARow(aRow))
+        // horiz right
+        c = col + 1;
+        while (c < Configure.COLS && c <= col + 4 &&
+            chessboard[row, c].GridImage.Equals(theChessmanType))
+        {
+            consCount++;
+            c++;
+        }
+        if (consCount >= 4)
             goto GAMEOVER;
 
-        // vertical
-        // vertical
-        // vertical
-
-        if (row < 4)
-            startCol = 0;
-        else
-            startCol = row - 4;
-
-        if ((row + 4) >= Configure.ROWS)
-            endCol = Configure.ROWS - 1;
-        else
-            endCol = row + 4;
-
-        index = 0;
-        for (int i = startCol; i <= endCol; i++)
+        //vertical up
+        r = row - 1;
+        c = col;
+        consCount = 0;
+        while (r >= 0 && r >= row - 4 &&
+            chessboard[r, col].GridImage.Equals(theChessmanType))
         {
-            if (chessboard[i, col].GridType.Equals(theChessmanType))
-                aRow[index] = 1;
-            else
-                aRow[index] = 0;
-            index++;
+            consCount++;
+            r--;
         }
-        for (int i = index; i < 9; i++)
-            aRow[i] = 0;
-
-        // validate
-        if (FiveInARow(aRow))
+        // vertical down
+        r = row + 1;
+        while (r < Configure.ROWS && r <= row + 4 &&
+            chessboard[r, col].GridImage.Equals(theChessmanType))
+        {
+            consCount++;
+            r++;
+        }
+        if (consCount >= 4)
             goto GAMEOVER;
 
-        // //////////////////
+        // \\\\\\\\ upper-left
+        r = row - 1;
+        c = col - 1;
+        consCount = 0;
+        while (r >= 0 && c >= 0 && r >= row - 4 &&
+            chessboard[r, c].GridImage.Equals(theChessmanType))
+        {
+            consCount++;
+            r--;
+            c--;
+        }
+        // \\\\\\\\ lower-right
+        r = row + 1;
+        c = col + 1;
+        while (r < Configure.ROWS && c < Configure.COLS && r <= row + 4 &&
+            chessboard[r, c].GridImage.Equals(theChessmanType))
+        {
+            consCount++;
+            r++;
+            c++;
+        }
+        if (consCount >= 4)
+            goto GAMEOVER;
+
+        // //////// upper-right
+        r = row - 1;
+        c = col + 1;
+        consCount = 0;
+        while (r >= 0 && c < Configure.COLS && r >= row - 4 &&
+            chessboard[r, c].GridImage.Equals(theChessmanType))
+        {
+            consCount++;
+            r--;
+            c++;
+        }
+        // //////// lower-left-
+        r = row + 1;
+        c = col - 1;
+        while (r < Configure.ROWS && c >= 0 && r <= row + 4 &&
+            chessboard[r, c].GridImage.Equals(theChessmanType))
+        {
+            consCount++;
+            r++;
+            c--;
+        }
+        if (consCount >= 4)
+            goto GAMEOVER;
 
         // nope
         return;
@@ -288,23 +300,38 @@ public class Board
         // found a winner, congrets!
     GAMEOVER:
         WinnerId = CurrTurn;
-        NewAGame();
+        ClearForANewGame();
     }
 
-    private bool FiveInARow(int[] aRow)
+    public static void KillPersonOnBoard(string boardId, string personId)
     {
-        for (int i = 0; i <= aRow.Length - 5; i++)
+        if (String.IsNullOrEmpty(boardId) || String.IsNullOrEmpty(personId))
+            return;
+
+        string query = String.
+            Format("SELECT * FROM [boards] WHERE {0}=@boardId AND {1}=@personId", COL_BID, COL_PID);
+        string delete = String.
+            Format("DELETE FROM [boards] WHERE {0}=@boardId AND {1}=@personId", COL_BID, COL_PID);
+        
+        using (SqlCeConnection conn = new SqlCeConnection())
         {
-            int val = 1;
-            for (int j = i; j < i + 5; j++)
+            conn.ConnectionString = CommonState.ConnectionString;
+            conn.Open();
+            using (SqlCeCommand cmd = new SqlCeCommand(null, conn))
             {
-                val *= aRow[j];
-            }
-            if (val == 1)
-            {
-                return true;
+                cmd.CommandText = query;
+                cmd.Parameters.Add("@boardId", boardId);
+                cmd.Parameters.Add("@personId", personId);
+                cmd.Prepare();
+                using (SqlCeDataReader reader = cmd.ExecuteReader())
+                {
+                    if (reader.Read())
+                    {
+                        cmd.CommandText = delete;
+                        cmd.ExecuteNonQuery();
+                    }
+                }
             }
         }
-        return false;
-    }
+    } // end method KillPersonOnBoard
 }
