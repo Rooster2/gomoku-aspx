@@ -1,0 +1,9 @@
+A Gomoku (five in a row) game written in ASP.NET C#
+
+no AI, just Person vs Person via the website.
+multiple rooms, and you can view the progress of game
+
+this is my exam project for my ASP.NET C# course at college.
+i distributed it under the MIT LICENSE
+
+Visit http://github.com/gdd/gomoku-aspx for latest info.
