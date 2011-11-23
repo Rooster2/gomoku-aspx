@@ -273,9 +273,11 @@ public partial class board : System.Web.UI.Page
         {
             // make move
             Debug.WriteLine("making move");
-            board.MakeMove(i, j);
-            board.EvaluateAt(i, j);
-            board.ToggleTurn();
+            if (board.MakeMove(i, j) == true)
+            {
+                board.EvaluateAt(i, j);
+                board.ToggleTurn();
+            }
             // TODO
             //CommonState.SaveBoard(board);
             //Response.Redirect(Request.Url.ToString());

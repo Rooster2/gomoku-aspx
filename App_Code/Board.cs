@@ -176,7 +176,7 @@ public class Board
 		}
 	}
 
-    public void MakeMove(int i, int j)
+    public bool MakeMove(int i, int j)
     {
         if (Chessman.GRID_IMG_NOPE.Equals(chessboard[i, j].GridImage))
         {
@@ -185,7 +185,7 @@ public class Board
         else
         {
             Debug.WriteLine("Chessman existed at this position");
-            return;
+            return false;
         }
         if (CurrTurn.Equals(PlayerBlackId))
         {
@@ -197,6 +197,7 @@ public class Board
             chessboard[i, j].GridImage = Chessman.GRID_IMG_WHITE;
             chessboard[i, j].GridType = Chessman.GRID_TYPE_WHITE;
         }
+        return true;
     }
 
     public void EvaluateAt(int row, int col)

@@ -66,7 +66,7 @@ table
 }
 
 
-border-upper
+.border-upper
 {
     height:16px;
     width:480px;
@@ -100,4 +100,40 @@ border-upper
     background-image:url(images/border-right-32x.png);
     background-repeat:no-repeat;
     background-size:16px 480px;
+}
+
+.border-ul
+{
+    height:16px;
+    width:16px;
+    background-image:url(images/border-ul-32x.png);
+    background-repeat:no-repeat;
+    background-size:16px 16px;
+}
+
+.border-ur
+{
+    height:16px;
+    width:16px;
+    background-image:url(images/border-ur-32x.png);
+    background-repeat:no-repeat;
+    background-size:16px 16px;
+}
+
+.border-ll
+{
+    height:16px;
+    width:16px;
+    background-image:url(images/border-ll-32x.png);
+    background-repeat:no-repeat;
+    background-size:16px 16px;
+}
+
+.border-lr
+{
+    height:16px;
+    width:16px;
+    background-image:url(images/border-lr-32x.png);
+    background-repeat:no-repeat;
+    background-size:16px 16px;
 }
