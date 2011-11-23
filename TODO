@@ -1,0 +1,5 @@
+TODO:
+porting to Mono and maybe drop VS support
+using SQLite
+using cookie instead of session (i dont quite konw the difference)
+
